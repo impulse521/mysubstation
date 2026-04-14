@@ -41,7 +41,8 @@ if query and df is not None:
                 st.write(f"**Наименование:** {row.iloc[1] if len(row) > 1 else '—'}")
                 st.write(f"**РУ:** {row.iloc[2] if len(row) > 2 else '—'}")
                 st.write(f"**Ячейка:** {row.iloc[3] if len(row) > 3 else '—'}")
-                st.write(f"**Схема:** {row.iloc[4] if len(row) > 4 else '—'}")
+                st.write(f"**Мощность:** {row.iloc[4] if len(row) > 4 else '—'}")
+                st.write(f"**Схема:** {row.iloc[5] if len(row) > 5 else '—'}")
             st.markdown("---")
     else:
         st.error("Ничего не найдено.")
