@@ -22,7 +22,7 @@ with col_input:
     query = st.text_input("Поиск", placeholder="Введите номер или наименование...", label_visibility="collapsed").strip().upper()
 
 with col_clear:
-    if st.button("Сброс", use_container_width=True):
+    if st.button("Найти", use_container_width=True):
         st.cache_data.clear()
         st.rerun()
 
