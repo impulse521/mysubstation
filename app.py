@@ -17,7 +17,7 @@ def load_data():
 df = load_data()
 
 # Колонки для ввода: текстовое поле + кнопка Найти
-col_input, col_clear = st.columns([4, 1])
+col_input, col_clear = st.columns([5, 1])
 
 with col_input:
     query = st.text_input("Поиск", placeholder="Введите номер позиции и нажмите Enter...", label_visibility="collapsed").strip().upper()
