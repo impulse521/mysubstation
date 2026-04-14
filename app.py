@@ -1,16 +1,16 @@
 import streamlit as st
 import pandas as pd
 
-# Настройка страницы
 st.set_page_config(page_title="Поиск ячеек ПС", layout="centered")
 
-st.title("Поиск оборудования ПС")
+st.title("🔎 Поиск оборудования ПС")
 
 @st.cache_data
 def load_data():
     try:
-        # Читаем 5 столбцов (A-E)
-        df = pd.read_excel("base.xlsx", usecols="A:E", names=['pos', 'ru', 'cell', 'feeder', 'schema'])
+        # Читаем 5 столбцов согласно вашему фото:
+        # A=pos, B=feeder, C=ru, D=cell, E=schema
+        df = pd.read_excel("base.xlsx", usecols="A:E", names=['pos', 'feeder', 'ru', 'cell', 'schema'])
         df['pos'] = df['pos'].astype(str).str.strip().str.upper()
         df = df.fillna("-")
         return df
@@ -20,22 +20,24 @@ def load_data():
 
 df = load_data()
 
-query = st.text_input("Введите позиционный номер:", placeholder="Например: MP-3265").strip().upper()
+query = st.text_input("Введите позиционный номер:", placeholder="Например: A80-ASU-LSP-006").strip().upper()
 
 if query:
     if df is not None:
-        result = df[df['pos'] == query]
+        # Ищем все совпадения (на случай, если номеров несколько)
+        result = df[df['pos'].str.contains(query, na=False, regex=False)]
         
         if not result.empty:
-            st.success("Позиция найдена!")
-            row = result.iloc[0]
-            
-            st.info(f"**РУ:** {row['ru']}")
-            st.info(f"**Ячейка:** {row['cell']}")
-            st.info(f"**Фидер:** {row['feeder']}")
-            st.warning(f"**Тип схемы:** {row['schema']}")
+            st.success(f"Найдено совпадений: {len(result)}")
+            for i in range(len(result)):
+                row = result.iloc[i]
+                with st.expander(f"📍 Позиция: {row['pos']}", expanded=True):
+                    st.info(f"**РУ:** {row['ru']}")
+                    st.info(f"**Ячейка:** {row['cell']}")
+                    st.info(f"**Фидер:** {row['feeder']}")
+                    st.warning(f"**Тип схемы:** {row['schema']}")
         else:
-            st.error("Позиция не найдена в базе.")
+            st.error("Позиция не найдена.")
 
 if st.button("Очистить"):
     st.rerun()
