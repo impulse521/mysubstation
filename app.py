@@ -38,6 +38,6 @@ if query and df is not None:
     else:
         st.error("Ничего не найдено. Проверьте правильность ввода.")
 
-if st.button("Обновить базу"):
+if st.button("Найти"):
     st.cache_data.clear()
     st.rerun()
