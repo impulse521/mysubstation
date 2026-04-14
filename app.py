@@ -15,7 +15,7 @@ def load_data():
 
 df = load_data()
 
-col_input, col_clear = st.columns([4, 1])
+col_input, col_clear = st.columns([5, 1])
 
 with col_input:
     # Теперь в подсказке указано, что искать можно и по названию
