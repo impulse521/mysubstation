@@ -1,43 +1,41 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Поиск оборудования", layout="centered")
-st.title("🔎 Поиск по базе ПС")
+st.set_page_config(page_title="Поиск ПС", layout="centered")
+st.title("🔎 Поиск оборудования ПС")
 
 @st.cache_data
 def load_data():
     try:
-        # Загружаем Excel. engine='openpyxl' важен для файлов .xlsx
+        # Читаем Excel, удаляя лишние пробелы в названиях
         df = pd.read_excel("base.xlsx", engine='openpyxl')
-        # Превращаем все данные в текст, чтобы поиск работал корректно
-        df = df.astype(str)
-        return df
+        df.columns = [str(c).strip() for c in df.columns]
+        return df.fillna("—") # Заменяем пустоты на прочерк
     except Exception as e:
-        st.error(f"Ошибка чтения base.xlsx: {e}")
+        st.error(f"Ошибка: {e}")
         return None
 
 df = load_data()
 
-query = st.text_input("Введите номер (позицию):").strip().upper()
+query = st.text_input("Введите номер позиции:", placeholder="Например: X-8303-J1").strip().upper()
 
 if query and df is not None:
-    # Ищем во всем файле строки, где в ПЕРВОЙ колонке есть ваш текст
-    first_column_name = df.columns[0]
-    result = df[df[first_column_name].str.upper().str.contains(query, na=False)]
+    # Поиск по первой колонке
+    first_col = df.columns[0]
+    result = df[df[first_col].astype(str).str.upper().str.contains(query, na=False)]
 
     if not result.empty:
         st.success(f"Найдено записей: {len(result)}")
         for i in range(len(result)):
             row = result.iloc[i]
-            # Создаем красивую карточку для каждой находки
-            with st.expander(f"📍 Позиция: {row[first_column_name]}", expanded=True):
-                # Выводим все остальные колонки из Excel
-                for col_name in df.columns[1:]:
-                    st.write(f"**{col_name}:** {row[col_name]}")
+            with st.expander(f"📍 Позиция: {row[first_col]}", expanded=True):
+                # Выводим все столбцы красиво
+                for col in df.columns[1:]:
+                    st.write(f"**{col}:** {row[col]}")
             st.markdown("---")
     else:
-        st.error("Ничего не найдено. Проверьте правильность ввода.")
+        st.error("Ничего не найдено.")
 
-if st.button("Найти"):
+if st.button("🔄 Найти"):
     st.cache_data.clear()
     st.rerun()
