@@ -47,6 +47,6 @@ if (query or find_clicked) and df is not None:
         st.error("Ничего не найдено.")
 
 # Кнопка обновления базы внизу страницы
-if st.sidebar.button("🔄 Найти"):
+if st.button("🔄 Найти"):
     st.cache_data.clear()
     st.rerun()
